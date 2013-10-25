@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import poke.server.management.ManagementQueue.ManagementQueueEntry;
 
 public class OutboundMgmtWorker extends Thread {
-	protected static Logger logger = LoggerFactory.getLogger("management");
+	protected static Logger logger = LoggerFactory.getLogger(OutboundMgmtWorker.class);
 
 	int workerId;
 	boolean forever = true;

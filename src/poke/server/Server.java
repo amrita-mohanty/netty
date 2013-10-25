@@ -35,6 +35,9 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import poke.client.ClientConnection;
+import poke.client.ClientListener;
+import poke.client.ClientPrintListener;
 import poke.server.conf.JsonUtil;
 import poke.server.conf.NodeDesc;
 import poke.server.conf.ServerConf;
@@ -152,6 +155,16 @@ public class Server {
 		// We can also accept connections from a other ports (e.g., isolate read
 		// and writes)
 
+			ClientConnection cc = ClientConnection.initConnection("localhost", 5570);
+			ClientListener listener = new ClientPrintListener("jab demo");
+			cc.addListener(listener);
+			
+			int count = 0;
+			for (int i = 0; i < 3; i++) {
+				count++;
+				cc.poke("test", count);
+			}
+		
 		logger.info("Starting server, listening on port = " + port);
 	}
 
@@ -183,6 +196,8 @@ public class Server {
 		// Bind and start to accept incoming connections.
 		Channel ch = bs.bind(new InetSocketAddress(port));
 		allChannels.add(ch);
+		
+		
 
 		logger.info("Starting server, listening on port = " + port);
 	}

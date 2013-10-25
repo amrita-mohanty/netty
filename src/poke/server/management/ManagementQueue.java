@@ -31,7 +31,7 @@ import eye.Comm.Management;
  * 
  */
 public class ManagementQueue {
-	protected static Logger logger = LoggerFactory.getLogger("management");
+	protected static Logger logger = LoggerFactory.getLogger(ManagementQueue.class);
 
 	protected static LinkedBlockingDeque<ManagementQueueEntry> inbound = new LinkedBlockingDeque<ManagementQueueEntry>();
 	protected static LinkedBlockingDeque<ManagementQueueEntry> outbound = new LinkedBlockingDeque<ManagementQueueEntry>();

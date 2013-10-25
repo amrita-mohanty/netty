@@ -7,7 +7,6 @@ export POKE_HOME="$( cd "$( dirname "${BASH_SOURCE[0]/..}" )" && pwd )"
 echo "** starting server from ${POKE_HOME} **"
 
 echo poke home = $POKE_HOME
-exit
 
 cd ${POKE_HOME}
 

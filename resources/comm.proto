@@ -31,9 +31,13 @@ message NameValueSet {
 }
 
 message Document {
-    optional string name_space = 1;
-    optional int64 id = 2;
-    required NameValueSet document = 3;
+      optional string docName = 1;
+      optional int64 id = 2;
+      optional bytes chunkContent = 4;
+      optional NameValueSet document = 3;
+      optional int64 chunkId = 5;
+      optional int64 totalChunk = 6;
+      optional int64 docSize = 7;
 }
 
 message DocumentSet {

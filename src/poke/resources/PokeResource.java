@@ -27,7 +27,7 @@ import eye.Comm.Request;
 import eye.Comm.Response;
 
 public class PokeResource implements Resource {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	protected static Logger logger = LoggerFactory.getLogger(PokeResource.class);
 
 	public PokeResource() {
 	}

@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ManagementHandler extends SimpleChannelUpstreamHandler {
-	protected static Logger logger = LoggerFactory.getLogger("management");
+	protected static Logger logger = LoggerFactory.getLogger(ManagementHandler.class);
 
 	public ManagementHandler() {
 		// logger.info("** HeartbeatHandler created **");

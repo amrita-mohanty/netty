@@ -2098,18 +2098,34 @@ public final class Comm {
   public interface DocumentOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // optional string name_space = 1;
-    boolean hasNameSpace();
-    String getNameSpace();
+    // optional string docName = 1;
+    boolean hasDocName();
+    String getDocName();
     
     // optional int64 id = 2;
     boolean hasId();
     long getId();
     
-    // required .NameValueSet document = 3;
+    // optional bytes chunkContent = 4;
+    boolean hasChunkContent();
+    com.google.protobuf.ByteString getChunkContent();
+    
+    // optional .NameValueSet document = 3;
     boolean hasDocument();
     eye.Comm.NameValueSet getDocument();
     eye.Comm.NameValueSetOrBuilder getDocumentOrBuilder();
+    
+    // optional int64 chunkId = 5;
+    boolean hasChunkId();
+    long getChunkId();
+    
+    // optional int64 totalChunk = 6;
+    boolean hasTotalChunk();
+    long getTotalChunk();
+    
+    // optional int64 docSize = 7;
+    boolean hasDocSize();
+    long getDocSize();
   }
   public static final class Document extends
       com.google.protobuf.GeneratedMessage
@@ -2140,14 +2156,14 @@ public final class Comm {
     }
     
     private int bitField0_;
-    // optional string name_space = 1;
-    public static final int NAME_SPACE_FIELD_NUMBER = 1;
-    private java.lang.Object nameSpace_;
-    public boolean hasNameSpace() {
+    // optional string docName = 1;
+    public static final int DOCNAME_FIELD_NUMBER = 1;
+    private java.lang.Object docName_;
+    public boolean hasDocName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public String getNameSpace() {
-      java.lang.Object ref = nameSpace_;
+    public String getDocName() {
+      java.lang.Object ref = docName_;
       if (ref instanceof String) {
         return (String) ref;
       } else {
@@ -2155,17 +2171,17 @@ public final class Comm {
             (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
         if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-          nameSpace_ = s;
+          docName_ = s;
         }
         return s;
       }
     }
-    private com.google.protobuf.ByteString getNameSpaceBytes() {
-      java.lang.Object ref = nameSpace_;
+    private com.google.protobuf.ByteString getDocNameBytes() {
+      java.lang.Object ref = docName_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-        nameSpace_ = b;
+        docName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -2182,11 +2198,21 @@ public final class Comm {
       return id_;
     }
     
-    // required .NameValueSet document = 3;
+    // optional bytes chunkContent = 4;
+    public static final int CHUNKCONTENT_FIELD_NUMBER = 4;
+    private com.google.protobuf.ByteString chunkContent_;
+    public boolean hasChunkContent() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public com.google.protobuf.ByteString getChunkContent() {
+      return chunkContent_;
+    }
+    
+    // optional .NameValueSet document = 3;
     public static final int DOCUMENT_FIELD_NUMBER = 3;
     private eye.Comm.NameValueSet document_;
     public boolean hasDocument() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     public eye.Comm.NameValueSet getDocument() {
       return document_;
@@ -2195,23 +2221,55 @@ public final class Comm {
       return document_;
     }
     
+    // optional int64 chunkId = 5;
+    public static final int CHUNKID_FIELD_NUMBER = 5;
+    private long chunkId_;
+    public boolean hasChunkId() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    public long getChunkId() {
+      return chunkId_;
+    }
+    
+    // optional int64 totalChunk = 6;
+    public static final int TOTALCHUNK_FIELD_NUMBER = 6;
+    private long totalChunk_;
+    public boolean hasTotalChunk() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    public long getTotalChunk() {
+      return totalChunk_;
+    }
+    
+    // optional int64 docSize = 7;
+    public static final int DOCSIZE_FIELD_NUMBER = 7;
+    private long docSize_;
+    public boolean hasDocSize() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    public long getDocSize() {
+      return docSize_;
+    }
+    
     private void initFields() {
-      nameSpace_ = "";
+      docName_ = "";
       id_ = 0L;
+      chunkContent_ = com.google.protobuf.ByteString.EMPTY;
       document_ = eye.Comm.NameValueSet.getDefaultInstance();
+      chunkId_ = 0L;
+      totalChunk_ = 0L;
+      docSize_ = 0L;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
       
-      if (!hasDocument()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!getDocument().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasDocument()) {
+        if (!getDocument().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -2221,13 +2279,25 @@ public final class Comm {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getNameSpaceBytes());
+        output.writeBytes(1, getDocNameBytes());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt64(2, id_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(3, document_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBytes(4, chunkContent_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt64(5, chunkId_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeInt64(6, totalChunk_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeInt64(7, docSize_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2240,15 +2310,31 @@ public final class Comm {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, getNameSpaceBytes());
+          .computeBytesSize(1, getDocNameBytes());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(2, id_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, document_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(4, chunkContent_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, chunkId_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(6, totalChunk_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, docSize_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -2375,16 +2461,24 @@ public final class Comm {
       
       public Builder clear() {
         super.clear();
-        nameSpace_ = "";
+        docName_ = "";
         bitField0_ = (bitField0_ & ~0x00000001);
         id_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000002);
+        chunkContent_ = com.google.protobuf.ByteString.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
         if (documentBuilder_ == null) {
           document_ = eye.Comm.NameValueSet.getDefaultInstance();
         } else {
           documentBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000008);
+        chunkId_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        totalChunk_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000020);
+        docSize_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
       
@@ -2426,7 +2520,7 @@ public final class Comm {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.nameSpace_ = nameSpace_;
+        result.docName_ = docName_;
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
@@ -2434,11 +2528,27 @@ public final class Comm {
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
+        result.chunkContent_ = chunkContent_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
         if (documentBuilder_ == null) {
           result.document_ = document_;
         } else {
           result.document_ = documentBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.chunkId_ = chunkId_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.totalChunk_ = totalChunk_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        result.docSize_ = docSize_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -2455,27 +2565,37 @@ public final class Comm {
       
       public Builder mergeFrom(eye.Comm.Document other) {
         if (other == eye.Comm.Document.getDefaultInstance()) return this;
-        if (other.hasNameSpace()) {
-          setNameSpace(other.getNameSpace());
+        if (other.hasDocName()) {
+          setDocName(other.getDocName());
         }
         if (other.hasId()) {
           setId(other.getId());
         }
+        if (other.hasChunkContent()) {
+          setChunkContent(other.getChunkContent());
+        }
         if (other.hasDocument()) {
           mergeDocument(other.getDocument());
+        }
+        if (other.hasChunkId()) {
+          setChunkId(other.getChunkId());
+        }
+        if (other.hasTotalChunk()) {
+          setTotalChunk(other.getTotalChunk());
+        }
+        if (other.hasDocSize()) {
+          setDocSize(other.getDocSize());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
       
       public final boolean isInitialized() {
-        if (!hasDocument()) {
-          
-          return false;
-        }
-        if (!getDocument().isInitialized()) {
-          
-          return false;
+        if (hasDocument()) {
+          if (!getDocument().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -2505,7 +2625,7 @@ public final class Comm {
             }
             case 10: {
               bitField0_ |= 0x00000001;
-              nameSpace_ = input.readBytes();
+              docName_ = input.readBytes();
               break;
             }
             case 16: {
@@ -2522,45 +2642,65 @@ public final class Comm {
               setDocument(subBuilder.buildPartial());
               break;
             }
+            case 34: {
+              bitField0_ |= 0x00000004;
+              chunkContent_ = input.readBytes();
+              break;
+            }
+            case 40: {
+              bitField0_ |= 0x00000010;
+              chunkId_ = input.readInt64();
+              break;
+            }
+            case 48: {
+              bitField0_ |= 0x00000020;
+              totalChunk_ = input.readInt64();
+              break;
+            }
+            case 56: {
+              bitField0_ |= 0x00000040;
+              docSize_ = input.readInt64();
+              break;
+            }
           }
         }
       }
       
       private int bitField0_;
       
-      // optional string name_space = 1;
-      private java.lang.Object nameSpace_ = "";
-      public boolean hasNameSpace() {
+      // optional string docName = 1;
+      private java.lang.Object docName_ = "";
+      public boolean hasDocName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      public String getNameSpace() {
-        java.lang.Object ref = nameSpace_;
+      public String getDocName() {
+        java.lang.Object ref = docName_;
         if (!(ref instanceof String)) {
           String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
-          nameSpace_ = s;
+          docName_ = s;
           return s;
         } else {
           return (String) ref;
         }
       }
-      public Builder setNameSpace(String value) {
+      public Builder setDocName(String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000001;
-        nameSpace_ = value;
+        docName_ = value;
         onChanged();
         return this;
       }
-      public Builder clearNameSpace() {
+      public Builder clearDocName() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        nameSpace_ = getDefaultInstance().getNameSpace();
+        docName_ = getDefaultInstance().getDocName();
         onChanged();
         return this;
       }
-      void setNameSpace(com.google.protobuf.ByteString value) {
+      void setDocName(com.google.protobuf.ByteString value) {
         bitField0_ |= 0x00000001;
-        nameSpace_ = value;
+        docName_ = value;
         onChanged();
       }
       
@@ -2585,12 +2725,36 @@ public final class Comm {
         return this;
       }
       
-      // required .NameValueSet document = 3;
+      // optional bytes chunkContent = 4;
+      private com.google.protobuf.ByteString chunkContent_ = com.google.protobuf.ByteString.EMPTY;
+      public boolean hasChunkContent() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public com.google.protobuf.ByteString getChunkContent() {
+        return chunkContent_;
+      }
+      public Builder setChunkContent(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        chunkContent_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearChunkContent() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        chunkContent_ = getDefaultInstance().getChunkContent();
+        onChanged();
+        return this;
+      }
+      
+      // optional .NameValueSet document = 3;
       private eye.Comm.NameValueSet document_ = eye.Comm.NameValueSet.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           eye.Comm.NameValueSet, eye.Comm.NameValueSet.Builder, eye.Comm.NameValueSetOrBuilder> documentBuilder_;
       public boolean hasDocument() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+        return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       public eye.Comm.NameValueSet getDocument() {
         if (documentBuilder_ == null) {
@@ -2609,7 +2773,7 @@ public final class Comm {
         } else {
           documentBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       public Builder setDocument(
@@ -2620,12 +2784,12 @@ public final class Comm {
         } else {
           documentBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       public Builder mergeDocument(eye.Comm.NameValueSet value) {
         if (documentBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004) &&
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
               document_ != eye.Comm.NameValueSet.getDefaultInstance()) {
             document_ =
               eye.Comm.NameValueSet.newBuilder(document_).mergeFrom(value).buildPartial();
@@ -2636,7 +2800,7 @@ public final class Comm {
         } else {
           documentBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       public Builder clearDocument() {
@@ -2646,11 +2810,11 @@ public final class Comm {
         } else {
           documentBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
       public eye.Comm.NameValueSet.Builder getDocumentBuilder() {
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         onChanged();
         return getDocumentFieldBuilder().getBuilder();
       }
@@ -2673,6 +2837,69 @@ public final class Comm {
           document_ = null;
         }
         return documentBuilder_;
+      }
+      
+      // optional int64 chunkId = 5;
+      private long chunkId_ ;
+      public boolean hasChunkId() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      public long getChunkId() {
+        return chunkId_;
+      }
+      public Builder setChunkId(long value) {
+        bitField0_ |= 0x00000010;
+        chunkId_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearChunkId() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        chunkId_ = 0L;
+        onChanged();
+        return this;
+      }
+      
+      // optional int64 totalChunk = 6;
+      private long totalChunk_ ;
+      public boolean hasTotalChunk() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      public long getTotalChunk() {
+        return totalChunk_;
+      }
+      public Builder setTotalChunk(long value) {
+        bitField0_ |= 0x00000020;
+        totalChunk_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearTotalChunk() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        totalChunk_ = 0L;
+        onChanged();
+        return this;
+      }
+      
+      // optional int64 docSize = 7;
+      private long docSize_ ;
+      public boolean hasDocSize() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      public long getDocSize() {
+        return docSize_;
+      }
+      public Builder setDocSize(long value) {
+        bitField0_ |= 0x00000040;
+        docSize_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearDocSize() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        docSize_ = 0L;
+        onChanged();
+        return this;
       }
       
       // @@protoc_insertion_point(builder_scope:Document)
@@ -2952,7 +3179,7 @@ public final class Comm {
       
       public eye.Comm.DocumentSet buildPartial() {
         eye.Comm.DocumentSet result = new eye.Comm.DocumentSet(this);
-        int from_bitField0_ = bitField0_;
+        //int from_bitField0_ = bitField0_;
         if (documentsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
             documents_ = java.util.Collections.unmodifiableList(documents_);
@@ -3515,7 +3742,7 @@ public final class Comm {
       
       public eye.Comm.NameSpaceSet buildPartial() {
         eye.Comm.NameSpaceSet result = new eye.Comm.NameSpaceSet(this);
-        int from_bitField0_ = bitField0_;
+        //int from_bitField0_ = bitField0_;
         if (spacesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
             spaces_ = java.util.Collections.unmodifiableList(spaces_);
@@ -10351,39 +10578,41 @@ public final class Comm {
       "\224\001\n\014NameValueSet\022)\n\tnode_type\030\001 \002(\0162\026.Na" +
       "meValueSet.NodeType\022\014\n\004name\030\002 \001(\t\022\r\n\005val" +
       "ue\030\003 \001(\t\022\033\n\004node\030\004 \003(\0132\r.NameValueSet\"\037\n" +
-      "\010NodeType\022\010\n\004NODE\020\001\022\t\n\005VALUE\020\002\"K\n\010Docume" +
-      "nt\022\022\n\nname_space\030\001 \001(\t\022\n\n\002id\030\002 \001(\003\022\037\n\010do" +
-      "cument\030\003 \002(\0132\r.NameValueSet\"+\n\013DocumentS",
-      "et\022\034\n\tdocuments\030\001 \003(\0132\t.Document\"*\n\014Name" +
-      "SpaceSet\022\032\n\006spaces\030\001 \003(\0132\n.NameSpace\")\n\013" +
-      "RoutingPath\022\014\n\004node\030\001 \002(\t\022\014\n\004time\030\002 \002(\003\"" +
-      "\304\003\n\006Header\022#\n\nrouting_id\030\001 \002(\0162\017.Header." +
-      "Routing\022\022\n\noriginator\030\002 \002(\t\022\013\n\003tag\030\003 \001(\t" +
-      "\022\014\n\004time\030\004 \001(\003\022\'\n\nreply_code\030\005 \001(\0162\023.Hea" +
-      "der.ReplyStatus\022\021\n\treply_msg\030\006 \001(\t\022\032\n\004pa" +
-      "th\030\007 \003(\0132\014.RoutingPath\022\016\n\006toNode\030\010 \001(\t\"\246" +
-      "\001\n\007Routing\022\n\n\006FINGER\020\002\022\t\n\005STATS\020\003\022\020\n\014NAM" +
-      "ESPACEADD\020\n\022\021\n\rNAMESPACELIST\020\013\022\023\n\017NAMESP",
-      "ACEUPDATE\020\014\022\023\n\017NAMESPACEREMOVE\020\r\022\n\n\006DOCA" +
-      "DD\020\024\022\013\n\007DOCFIND\020\025\022\r\n\tDOCUPDATE\020\026\022\r\n\tDOCR" +
-      "EMOVE\020\027\"U\n\013ReplyStatus\022\013\n\007SUCCESS\020\001\022\013\n\007F" +
-      "AILURE\020\002\022\n\n\006NOAUTH\020\003\022\016\n\nMISSINGARG\020\004\022\020\n\014" +
-      "NOCONNECTION\020\005\"U\n\007Payload\022\027\n\006finger\030\001 \001(" +
-      "\0132\007.Finger\022\026\n\003doc\030\002 \001(\0132\t.Document\022\031\n\005sp" +
-      "ace\030\003 \001(\0132\n.NameSpace\"v\n\014PayloadReply\022\027\n" +
-      "\006finger\030\001 \001(\0132\007.Finger\022\027\n\004docs\030\002 \003(\0132\t.D" +
-      "ocument\022\032\n\006spaces\030\003 \003(\0132\n.NameSpace\022\030\n\005s" +
-      "tats\030\004 \001(\0132\t.Document\":\n\007Request\022\027\n\006head",
-      "er\030\001 \002(\0132\007.Header\022\026\n\004body\030\002 \002(\0132\010.Payloa" +
-      "d\"@\n\010Response\022\027\n\006header\030\001 \002(\0132\007.Header\022\033" +
-      "\n\004body\030\002 \002(\0132\r.PayloadReply\",\n\tHeartbeat" +
-      "\022\016\n\006nodeId\030\001 \002(\t\022\017\n\007timeRef\030\002 \002(\003\"\225\001\n\007Ne" +
-      "twork\022\016\n\006nodeId\030\001 \002(\t\022\037\n\006action\030\002 \002(\0162\017." +
-      "Network.Action\"Y\n\006Action\022\014\n\010NODEJOIN\020\001\022\r" +
-      "\n\tNODELEAVE\020\002\022\014\n\010NODEDEAD\020\003\022\007\n\003MAP\0207\022\014\n\010" +
-      "ANNOUNCE\0208\022\r\n\010SHUTDOWN\020\347\007\"?\n\nManagement\022" +
-      "\027\n\005graph\030\001 \001(\0132\010.Network\022\030\n\004beat\030\002 \001(\0132\n" +
-      ".HeartbeatB\007\n\003eyeH\001"
+      "\010NodeType\022\010\n\004NODE\020\001\022\t\n\005VALUE\020\002\"\224\001\n\010Docum" +
+      "ent\022\017\n\007docName\030\001 \001(\t\022\n\n\002id\030\002 \001(\003\022\024\n\014chun" +
+      "kContent\030\004 \001(\014\022\037\n\010document\030\003 \001(\0132\r.NameV",
+      "alueSet\022\017\n\007chunkId\030\005 \001(\003\022\022\n\ntotalChunk\030\006" +
+      " \001(\003\022\017\n\007docSize\030\007 \001(\003\"+\n\013DocumentSet\022\034\n\t" +
+      "documents\030\001 \003(\0132\t.Document\"*\n\014NameSpaceS" +
+      "et\022\032\n\006spaces\030\001 \003(\0132\n.NameSpace\")\n\013Routin" +
+      "gPath\022\014\n\004node\030\001 \002(\t\022\014\n\004time\030\002 \002(\003\"\304\003\n\006He" +
+      "ader\022#\n\nrouting_id\030\001 \002(\0162\017.Header.Routin" +
+      "g\022\022\n\noriginator\030\002 \002(\t\022\013\n\003tag\030\003 \001(\t\022\014\n\004ti" +
+      "me\030\004 \001(\003\022\'\n\nreply_code\030\005 \001(\0162\023.Header.Re" +
+      "plyStatus\022\021\n\treply_msg\030\006 \001(\t\022\032\n\004path\030\007 \003" +
+      "(\0132\014.RoutingPath\022\016\n\006toNode\030\010 \001(\t\"\246\001\n\007Rou",
+      "ting\022\n\n\006FINGER\020\002\022\t\n\005STATS\020\003\022\020\n\014NAMESPACE" +
+      "ADD\020\n\022\021\n\rNAMESPACELIST\020\013\022\023\n\017NAMESPACEUPD" +
+      "ATE\020\014\022\023\n\017NAMESPACEREMOVE\020\r\022\n\n\006DOCADD\020\024\022\013" +
+      "\n\007DOCFIND\020\025\022\r\n\tDOCUPDATE\020\026\022\r\n\tDOCREMOVE\020" +
+      "\027\"U\n\013ReplyStatus\022\013\n\007SUCCESS\020\001\022\013\n\007FAILURE" +
+      "\020\002\022\n\n\006NOAUTH\020\003\022\016\n\nMISSINGARG\020\004\022\020\n\014NOCONN" +
+      "ECTION\020\005\"U\n\007Payload\022\027\n\006finger\030\001 \001(\0132\007.Fi" +
+      "nger\022\026\n\003doc\030\002 \001(\0132\t.Document\022\031\n\005space\030\003 " +
+      "\001(\0132\n.NameSpace\"v\n\014PayloadReply\022\027\n\006finge" +
+      "r\030\001 \001(\0132\007.Finger\022\027\n\004docs\030\002 \003(\0132\t.Documen",
+      "t\022\032\n\006spaces\030\003 \003(\0132\n.NameSpace\022\030\n\005stats\030\004" +
+      " \001(\0132\t.Document\":\n\007Request\022\027\n\006header\030\001 \002" +
+      "(\0132\007.Header\022\026\n\004body\030\002 \002(\0132\010.Payload\"@\n\010R" +
+      "esponse\022\027\n\006header\030\001 \002(\0132\007.Header\022\033\n\004body" +
+      "\030\002 \002(\0132\r.PayloadReply\",\n\tHeartbeat\022\016\n\006no" +
+      "deId\030\001 \002(\t\022\017\n\007timeRef\030\002 \002(\003\"\225\001\n\007Network\022" +
+      "\016\n\006nodeId\030\001 \002(\t\022\037\n\006action\030\002 \002(\0162\017.Networ" +
+      "k.Action\"Y\n\006Action\022\014\n\010NODEJOIN\020\001\022\r\n\tNODE" +
+      "LEAVE\020\002\022\014\n\010NODEDEAD\020\003\022\007\n\003MAP\0207\022\014\n\010ANNOUN" +
+      "CE\0208\022\r\n\010SHUTDOWN\020\347\007\"?\n\nManagement\022\027\n\005gra",
+      "ph\030\001 \001(\0132\010.Network\022\030\n\004beat\030\002 \001(\0132\n.Heart" +
+      "beatB\007\n\003eyeH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -10419,7 +10648,7 @@ public final class Comm {
           internal_static_Document_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Document_descriptor,
-              new java.lang.String[] { "NameSpace", "Id", "Document", },
+              new java.lang.String[] { "DocName", "Id", "ChunkContent", "Document", "ChunkId", "TotalChunk", "DocSize", },
               eye.Comm.Document.class,
               eye.Comm.Document.Builder.class);
           internal_static_DocumentSet_descriptor =
