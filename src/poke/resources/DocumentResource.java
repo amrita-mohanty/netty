@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 
+import poke.server.Server;
 import poke.server.resources.Resource;
 import poke.server.resources.ResourceUtil;
 import eye.Comm.Document;
@@ -77,13 +78,14 @@ public class DocumentResource implements Resource {
 	public void docAdd(String fileName, ByteString fileContent){
 		try {
 
-			if(new File("/Users/amrita/" + fileName).exists())
+			String filePath = Server.COMMON_LOCATION+Server.SERVER_NAME+"/"+fileName;
+			if(new File(filePath).exists())
 			{
-				logger.info("File already exists ...so not copying. location : "+"/Users/amrita/" + fileName);
+				logger.info("File already exists ...so not copying. location : "+filePath);
 			}
 			else
 			{
-				DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(new File("/Users/amrita/" + fileName)));
+				DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(new File(filePath)));
 				IOUtils.write(fileContent.toByteArray(), dataOutputStream);
 				IOUtils.closeQuietly(dataOutputStream);
 

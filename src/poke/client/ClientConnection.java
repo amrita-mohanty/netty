@@ -51,6 +51,14 @@ public class ClientConnection {
 	private LinkedBlockingDeque<com.google.protobuf.GeneratedMessage> outbound;
 	private OutboundWorker worker;
 
+	public String getHost() {
+		return host;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
 	protected ClientConnection(String host, int port) {
 		this.host = host;
 		this.port = port;

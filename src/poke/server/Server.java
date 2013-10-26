@@ -75,6 +75,10 @@ public class Server {
 	protected ChannelFactory cf, mgmtCF;
 	protected ServerConf conf;
 	protected HeartbeatManager hbMgr;
+	
+	public static String COMMON_LOCATION = "/Users/amrita/Documents/";
+	
+	public static String SERVER_NAME;
 
 	/**
 	 * static because we need to get a handle to the factory from the shutdown
@@ -99,6 +103,10 @@ public class Server {
 	 * @param cfg
 	 */
 	public Server(File cfg) {
+		// get the file name of conf as it determine which server we are
+		String confFileName = cfg.getName();
+		SERVER_NAME = confFileName.replace(".conf", "");
+		logger.info("Current server name : "+SERVER_NAME);
 		init(cfg);
 	}
 
@@ -160,39 +168,35 @@ public class Server {
 
 		// We can also accept connections from a other ports (e.g., isolate read
 		// and writes)
-
-		if(port != 5570)
-		{
-			logger.info("Connecting to localhost port 5570");
-			ClientConnection cc = ClientConnection.initConnection("localhost", 5570);
-			ClientListener listener = new ClientPrintListener("jab demo");
-			cc.addListener(listener);
-
-			int count = 0;
-			for (int i = 0; i < 3; i++) {
-				count++;
-				cc.poke("POKE", count);
-			}
-
-			// Transfer file using protobuf
-			transferFile(cc);
-		}
 		
 		logger.info("Starting server, listening on port = " + port);
 	}
 	
-	public void transferFile(ClientConnection cc){
+	public void transferFile(ClientConnection cc, String serverName){
 		try{
-			DataInputStream inputStream = new DataInputStream(new FileInputStream(new File("/Users/amrita/Documents/writing-duplicate.ppt")));
-			// Content of the file in byteArrayOutputStream
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			IOUtils.copy(inputStream, byteArrayOutputStream);
-			ByteString fileContent = ByteString.copyFrom(byteArrayOutputStream.toByteArray());
+			logger.info("Bootup copy....");
 			
-			cc.sendFile("writing-duplicate.ppt", fileContent);
-			
-			IOUtils.closeQuietly(inputStream);
-			IOUtils.closeQuietly(byteArrayOutputStream);
+			// Get all the files in current server
+			for(File file : new File(COMMON_LOCATION+serverName).listFiles())
+			{
+				// To ignore system files
+				if(file.getName().startsWith("."))
+				{
+					continue;
+				}
+				logger.info("Copying file : "+file.getAbsolutePath()+" to host : "+cc.getHost()+", port : "+cc.getPort());
+				
+				DataInputStream inputStream = new DataInputStream(new FileInputStream(file));
+				// Content of the file in byteArrayOutputStream
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				IOUtils.copy(inputStream, byteArrayOutputStream);
+				ByteString fileContent = ByteString.copyFrom(byteArrayOutputStream.toByteArray());
+				
+				cc.sendFile(file.getName(), fileContent);
+				
+				IOUtils.closeQuietly(inputStream);
+				IOUtils.closeQuietly(byteArrayOutputStream);
+			}
 		}
 		catch(IOException e){
 			System.err.println("An error occured file sending the file !!!");
@@ -229,11 +233,35 @@ public class Server {
 		Channel ch = bs.bind(new InetSocketAddress(port));
 		allChannels.add(ch);
 		
-		
-
 		logger.info("Starting server, listening on port = " + port);
 	}
 
+	/**
+	 * 
+	 */
+	public void copyFilesToAdjacentNeighbor(String neighborHostname, int neighborPort, String serverName)
+	{
+		//TODO: One time effort to check whether we can transfer files. Later on move this
+		// to place where we can handle on going requests
+		{
+			logger.info("Connecting to neighborHostname : "+neighborHostname+", neighborPort : "+neighborPort);
+			ClientConnection cc = ClientConnection.initConnection(neighborHostname, neighborPort);
+			ClientListener listener = new ClientPrintListener("ClientPrintListener for Neighbour Copy");
+			cc.addListener(listener);
+
+			// This just for test so that we know that poke is working
+			int count = 0;
+			for (int i = 0; i < 3; i++) {
+				count++;
+				cc.poke("POKE", count);
+			}
+
+			// Transfer file using protobuf
+			transferFile(cc, serverName);
+		}
+	}
+	
+	
 	/**
 	 * 
 	 */
@@ -274,7 +302,17 @@ public class Server {
 		HeartbeatConnector conn = HeartbeatConnector.getInstance();
 		conn.start();
 
-		logger.info("Server ready");
+		// Copy all my files to neighbours
+		for (NodeDesc nn : conf.getNearest().getNearestNodes().values()) {
+			// Neighbor hostname
+			String neighborHostname = nn.getHost();
+			// Neighbor port
+			int neighborPort = nn.getPort();
+			
+			copyFilesToAdjacentNeighbor(neighborHostname, neighborPort, SERVER_NAME);
+		}
+		
+		logger.info(SERVER_NAME+" is ready");
 	}
 
 	/**
