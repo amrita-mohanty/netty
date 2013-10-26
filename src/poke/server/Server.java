@@ -18,11 +18,9 @@ package poke.server;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
@@ -163,19 +161,22 @@ public class Server {
 		// We can also accept connections from a other ports (e.g., isolate read
 		// and writes)
 
+		if(port != 5570)
+		{
+			logger.info("Connecting to localhost port 5570");
 			ClientConnection cc = ClientConnection.initConnection("localhost", 5570);
 			ClientListener listener = new ClientPrintListener("jab demo");
 			cc.addListener(listener);
-			
-			/*int count = 0;
+
+			int count = 0;
 			for (int i = 0; i < 3; i++) {
 				count++;
-				cc.poke("test", count);
-			}*/
-			
+				cc.poke("POKE", count);
+			}
+
 			// Transfer file using protobuf
 			transferFile(cc);
-			
+		}
 		
 		logger.info("Starting server, listening on port = " + port);
 	}
@@ -187,7 +188,11 @@ public class Server {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			IOUtils.copy(inputStream, byteArrayOutputStream);
 			ByteString fileContent = ByteString.copyFrom(byteArrayOutputStream.toByteArray());
+			
 			cc.sendFile("writing-duplicate.ppt", fileContent);
+			
+			IOUtils.closeQuietly(inputStream);
+			IOUtils.closeQuietly(byteArrayOutputStream);
 		}
 		catch(IOException e){
 			System.err.println("An error occured file sending the file !!!");

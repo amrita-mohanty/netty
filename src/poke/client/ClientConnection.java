@@ -28,9 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
-import com.sun.jmx.remote.internal.ClientCommunicatorAdmin;
 
-import eye.Comm.Document;
 import eye.Comm.Finger;
 import eye.Comm.Header;
 import eye.Comm.Payload;
@@ -119,24 +117,29 @@ public class ClientConnection {
 	}
 	
 	public void sendFile(String fileName,ByteString fileContent) {
-		// Create Document protobuf-element to transfer file
-		Document.Builder doc = eye.Comm.Document.newBuilder();
-		doc.setDocName(fileName);
-		doc.setChunkContent(fileContent);
+		// data to send
+		Finger.Builder f = eye.Comm.Finger.newBuilder();
+		f.setTag(fileName);
+		f.setNumber(fileContent.size());
 
+		//document to be sent
+		eye.Comm.Document.Builder d = eye.Comm.Document.newBuilder();
+		d.setDocName(fileName);
+		d.setChunkContent(fileContent);
+		
 		// payload containing data
 		Request.Builder r = Request.newBuilder();
 		eye.Comm.Payload.Builder p = Payload.newBuilder();
-		//p.setFinger(f.build());
-		p.setDoc(doc.build());
+		p.setFinger(f.build());
+		p.setDoc(d.build());
 		r.setBody(p.build());
 
 		// header with routing info
 		eye.Comm.Header.Builder h = Header.newBuilder();
 		h.setOriginator("client");
-		h.setTag("Test file Transfer");
+		h.setTag("test finger");
 		h.setTime(System.currentTimeMillis());
-		h.setRoutingId(eye.Comm.Header.Routing.DOCADD);
+		h.setRoutingId(eye.Comm.Header.Routing.FINGER);
 		r.setHeader(h.build());
 
 		eye.Comm.Request req = r.build();

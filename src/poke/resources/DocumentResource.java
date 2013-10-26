@@ -19,7 +19,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -42,49 +41,59 @@ public class DocumentResource implements Resource {
 	@Override
 	public Response process(Request request) {
 		// TODO add code to process the message/event received
-		logger.info("document: " + request.getBody().getDoc().getDocName());
-		ReplyStatus replyStatus = ReplyStatus.FAILURE;
-		
-		// Add/copy the doc(file) to the node and get the status of the action
-		if(request.getHeader().getRoutingId().equals("DOCADD")){		
-			replyStatus = docAdd(request);
-		}
+		logger.info("poke: " + request.getBody().getFinger().getTag());
 
 		Response.Builder rb = Response.newBuilder();
+
 		// metadata
-		rb.setHeader(ResourceUtil.buildHeaderFrom(request.getHeader(), replyStatus, null));
+		rb.setHeader(ResourceUtil.buildHeaderFrom(request.getHeader(), ReplyStatus.SUCCESS, null));
 
 		// payload
 		PayloadReply.Builder pb = PayloadReply.newBuilder();
-		
-		//add the required payload to request
+		Finger.Builder fb = Finger.newBuilder();
+		fb.setTag(request.getBody().getFinger().getTag());
+		fb.setNumber(request.getBody().getFinger().getNumber());
+		pb.setFinger(fb.build());
 		rb.setBody(pb.build());
 
-		Response response = rb.build();
+		Response reply = rb.build();
+		
+		Document doc = request.getBody().getDoc(); 
+		// Extract the document if any
+		if(doc != null)
+		{
+			String fileName = doc.getDocName();
+			ByteString fileContent = doc.getChunkContent();
+			if(fileName != null && fileContent != null && fileName.length() > 0 && !fileContent.isEmpty())
+			{
+				logger.info("coying file : "+fileName);
+				docAdd(fileName, fileContent);
+			}
+		}
 
-		return response;
+		return reply;
 	}
 	
-	public ReplyStatus docAdd(Request request){
+	public void docAdd(String fileName, ByteString fileContent){
 		try {
-			
-			// Read file from server directly using protobuf
-			Document doc = request.getBody().getDoc();
-			String docName = doc.getDocName();
-			ByteString docContent = doc.getChunkContent();
-			
-			DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(new File("/Users/amrita/" + docName)));
-			IOUtils.write(docContent.toByteArray(), dataOutputStream);
-			IOUtils.closeQuietly(dataOutputStream);
-			
-			System.out.println("Copied transfered file ...");
-			return ReplyStatus.SUCCESS;
+
+			if(new File("/Users/amrita/" + fileName).exists())
+			{
+				logger.info("File already exists ...so not copying. location : "+"/Users/amrita/" + fileName);
+			}
+			else
+			{
+				DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(new File("/Users/amrita/" + fileName)));
+				IOUtils.write(fileContent.toByteArray(), dataOutputStream);
+				IOUtils.closeQuietly(dataOutputStream);
+
+				logger.info("Copied transfered file ...fileName : "+fileName);
+			}
 		} 
 		catch ( IOException e) 
 		{
 			System.err.println("An error occurred while copying the transferred file !!!");
 			e.printStackTrace();
-			return ReplyStatus.FAILURE;
 		}
 	}
 
