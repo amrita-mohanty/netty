@@ -36,7 +36,7 @@ import poke.server.management.ManagementQueue;
 import com.google.protobuf.GeneratedMessage;
 
 public class MonitorHandler extends SimpleChannelUpstreamHandler {
-	protected static Logger logger = LoggerFactory.getLogger("monitor");
+	protected static Logger logger = LoggerFactory.getLogger(MonitorHandler.class);
 
 	protected ConcurrentMap<String, MonitorListener> listeners = new ConcurrentHashMap<String, MonitorListener>();
 	private volatile Channel channel;

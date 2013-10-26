@@ -32,7 +32,7 @@ import eye.Comm.Document;
 import eye.Comm.NameSpace;
 
 public class DatabaseStorage implements Storage {
-	protected static Logger logger = LoggerFactory.getLogger("database");
+	protected static Logger logger = LoggerFactory.getLogger(DatabaseStorage.class);
 
 	public static final String sDriver = "jdbc.driver";
 	public static final String sUrl = "jdbc.url";

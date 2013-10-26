@@ -13,7 +13,7 @@ import eye.Comm.Header;
  * 
  */
 public class ClientPrintListener implements ClientListener {
-	protected static Logger logger = LoggerFactory.getLogger("client");
+	protected static Logger logger = LoggerFactory.getLogger(ClientPrintListener.class);
 
 	private String id;
 

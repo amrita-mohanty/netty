@@ -46,7 +46,7 @@ import eye.Comm.Response;
  * 
  */
 public class PerChannelQueue implements ChannelQueue {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	protected static Logger logger = LoggerFactory.getLogger(PerChannelQueue.class);
 
 	private Channel channel;
 	private LinkedBlockingDeque<com.google.protobuf.GeneratedMessage> inbound;

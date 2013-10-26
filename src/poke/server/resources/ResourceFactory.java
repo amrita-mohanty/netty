@@ -43,7 +43,7 @@ import eye.Comm.Header;
  * 
  */
 public class ResourceFactory {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	protected static Logger logger = LoggerFactory.getLogger(ResourceFactory.class);
 
 	private static ServerConf cfg;
 	private static AtomicReference<ResourceFactory> factory = new AtomicReference<ResourceFactory>();

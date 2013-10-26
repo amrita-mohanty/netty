@@ -26,8 +26,11 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
+import com.sun.jmx.remote.internal.ClientCommunicatorAdmin;
 
+import eye.Comm.Document;
 import eye.Comm.Finger;
 import eye.Comm.Header;
 import eye.Comm.Payload;
@@ -40,7 +43,7 @@ import eye.Comm.Request;
  * 
  */
 public class ClientConnection {
-	protected static Logger logger = LoggerFactory.getLogger("client");
+	protected static Logger logger = LoggerFactory.getLogger(ClientConnection.class);
 
 	private String host;
 	private int port;
@@ -114,6 +117,38 @@ public class ClientConnection {
 			logger.warn("Unable to deliver message, queuing");
 		}
 	}
+	
+	public void sendFile(String fileName,ByteString fileContent) {
+		// Create Document protobuf-element to transfer file
+		Document.Builder doc = eye.Comm.Document.newBuilder();
+		doc.setDocName(fileName);
+		doc.setChunkContent(fileContent);
+
+		// payload containing data
+		Request.Builder r = Request.newBuilder();
+		eye.Comm.Payload.Builder p = Payload.newBuilder();
+		//p.setFinger(f.build());
+		p.setDoc(doc.build());
+		r.setBody(p.build());
+
+		// header with routing info
+		eye.Comm.Header.Builder h = Header.newBuilder();
+		h.setOriginator("client");
+		h.setTag("Test file Transfer");
+		h.setTime(System.currentTimeMillis());
+		h.setRoutingId(eye.Comm.Header.Routing.DOCADD);
+		r.setHeader(h.build());
+
+		eye.Comm.Request req = r.build();
+
+		try {
+			// enqueue message
+			outbound.put(req);
+		} catch (InterruptedException e) {
+			logger.warn("Unable to deliver message, queuing");
+		}
+	}
+	
 
 	private void init() {
 		// the queue to support client-side surging

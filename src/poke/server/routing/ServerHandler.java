@@ -46,7 +46,7 @@ import poke.server.queue.QueueFactory;
  * 
  */
 public class ServerHandler extends SimpleChannelUpstreamHandler {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	protected static Logger logger = LoggerFactory.getLogger(ServerHandler.class);
 
 	private ChannelQueue queue;
 

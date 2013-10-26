@@ -23,7 +23,7 @@ import eye.Comm.Request;
 import eye.Comm.Response;
 
 public class NameSpaceResource implements Resource {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	protected static Logger logger = LoggerFactory.getLogger(NameSpaceResource.class);
 
 	@Override
 	public Response process(Request request) {

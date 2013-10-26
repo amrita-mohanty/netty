@@ -39,7 +39,7 @@ import eye.Comm.Response;
  * 
  */
 public class OnlyOneQueue implements ChannelQueue {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	protected static Logger logger = LoggerFactory.getLogger(OnlyOneQueue.class);
 
 	private Channel channel;
 

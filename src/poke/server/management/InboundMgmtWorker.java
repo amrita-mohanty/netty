@@ -45,7 +45,7 @@ import eye.Comm.Network.Action;
  * 
  */
 public class InboundMgmtWorker extends Thread {
-	protected static Logger logger = LoggerFactory.getLogger("management");
+	protected static Logger logger = LoggerFactory.getLogger(InboundMgmtWorker.class);
 
 	int workerId;
 	boolean forever = true;

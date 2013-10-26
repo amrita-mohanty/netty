@@ -39,7 +39,7 @@ import eye.Comm.Network.Action;
  * 
  */
 public class HeartMonitor {
-	protected static Logger logger = LoggerFactory.getLogger("monitor");
+	protected static Logger logger = LoggerFactory.getLogger(HeartMonitor.class);
 
 	protected ChannelFuture channel; // do not use directly call connect()!
 	protected ClientBootstrap bootstrap;

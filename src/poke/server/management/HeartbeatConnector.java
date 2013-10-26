@@ -34,7 +34,7 @@ import poke.server.management.HeartbeatData.BeatStatus;
  * 
  */
 public class HeartbeatConnector extends Thread {
-	protected static Logger logger = LoggerFactory.getLogger("management");
+	protected static Logger logger = LoggerFactory.getLogger(HeartbeatConnector.class);
 	protected static AtomicReference<HeartbeatConnector> instance = new AtomicReference<HeartbeatConnector>();
 
 	private ConcurrentLinkedQueue<HeartMonitor> monitors = new ConcurrentLinkedQueue<HeartMonitor>();

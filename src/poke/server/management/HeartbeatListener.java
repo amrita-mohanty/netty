@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import poke.monitor.MonitorListener;
 
 public class HeartbeatListener implements MonitorListener {
-	protected static Logger logger = LoggerFactory.getLogger("management");
+	protected static Logger logger = LoggerFactory.getLogger(HeartbeatListener.class);
 
 	private HeartbeatData data;
 

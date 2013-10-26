@@ -15,11 +15,21 @@
  */
 package poke.resources;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.ByteString;
+
 import poke.server.resources.Resource;
 import poke.server.resources.ResourceUtil;
+import eye.Comm.Document;
 import eye.Comm.Finger;
 import eye.Comm.PayloadReply;
 import eye.Comm.Request;
@@ -32,24 +42,50 @@ public class DocumentResource implements Resource {
 	@Override
 	public Response process(Request request) {
 		// TODO add code to process the message/event received
-		logger.info("document: " + request.getBody().getFinger().getTag());
+		logger.info("document: " + request.getBody().getDoc().getDocName());
+		ReplyStatus replyStatus = ReplyStatus.FAILURE;
+		
+		// Add/copy the doc(file) to the node and get the status of the action
+		if(request.getHeader().getRoutingId().equals("DOCADD")){		
+			replyStatus = docAdd(request);
+		}
 
 		Response.Builder rb = Response.newBuilder();
-
 		// metadata
-		rb.setHeader(ResourceUtil.buildHeaderFrom(request.getHeader(), ReplyStatus.SUCCESS, null));
+		rb.setHeader(ResourceUtil.buildHeaderFrom(request.getHeader(), replyStatus, null));
 
 		// payload
 		PayloadReply.Builder pb = PayloadReply.newBuilder();
-		Finger.Builder fb = Finger.newBuilder();
-		fb.setTag(request.getBody().getFinger().getTag());
-		fb.setNumber(request.getBody().getFinger().getNumber());
-		pb.setFinger(fb.build());
+		
+		//add the required payload to request
 		rb.setBody(pb.build());
 
-		Response reply = rb.build();
+		Response response = rb.build();
 
-		return reply;
+		return response;
+	}
+	
+	public ReplyStatus docAdd(Request request){
+		try {
+			
+			// Read file from server directly using protobuf
+			Document doc = request.getBody().getDoc();
+			String docName = doc.getDocName();
+			ByteString docContent = doc.getChunkContent();
+			
+			DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(new File("/Users/amrita/" + docName)));
+			IOUtils.write(docContent.toByteArray(), dataOutputStream);
+			IOUtils.closeQuietly(dataOutputStream);
+			
+			System.out.println("Copied transfered file ...");
+			return ReplyStatus.SUCCESS;
+		} 
+		catch ( IOException e) 
+		{
+			System.err.println("An error occurred while copying the transferred file !!!");
+			e.printStackTrace();
+			return ReplyStatus.FAILURE;
+		}
 	}
 
 }

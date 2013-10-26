@@ -28,7 +28,7 @@ import eye.Comm.Response;
  * 
  */
 public class NoOpQueue implements ChannelQueue {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	protected static Logger logger = LoggerFactory.getLogger(NoOpQueue.class);
 	private String queueName;
 
 	public NoOpQueue() {

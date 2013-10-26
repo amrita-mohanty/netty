@@ -16,13 +16,19 @@
 package poke.server;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.IOUtils;
 import org.jboss.netty.bootstrap.Bootstrap;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.AdaptiveReceiveBufferSizePredictorFactory;
@@ -34,6 +40,8 @@ import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.protobuf.ByteString;
 
 import poke.client.ClientConnection;
 import poke.client.ClientListener;
@@ -62,7 +70,7 @@ import poke.server.routing.ServerDecoderPipeline;
  * 
  */
 public class Server {
-	protected static Logger logger = LoggerFactory.getLogger("server");
+	protected static Logger logger = LoggerFactory.getLogger(Server.class);
 
 	protected static final ChannelGroup allChannels = new DefaultChannelGroup("server");
 	protected static HashMap<Integer, Bootstrap> bootstrap = new HashMap<Integer, Bootstrap>();
@@ -159,13 +167,32 @@ public class Server {
 			ClientListener listener = new ClientPrintListener("jab demo");
 			cc.addListener(listener);
 			
-			int count = 0;
+			/*int count = 0;
 			for (int i = 0; i < 3; i++) {
 				count++;
 				cc.poke("test", count);
-			}
+			}*/
+			
+			// Transfer file using protobuf
+			transferFile(cc);
+			
 		
 		logger.info("Starting server, listening on port = " + port);
+	}
+	
+	public void transferFile(ClientConnection cc){
+		try{
+			DataInputStream inputStream = new DataInputStream(new FileInputStream(new File("/Users/amrita/Documents/writing-duplicate.ppt")));
+			// Content of the file in byteArrayOutputStream
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			IOUtils.copy(inputStream, byteArrayOutputStream);
+			ByteString fileContent = ByteString.copyFrom(byteArrayOutputStream.toByteArray());
+			cc.sendFile("writing-duplicate.ppt", fileContent);
+		}
+		catch(IOException e){
+			System.err.println("An error occured file sending the file !!!");
+			e.printStackTrace();
+		}
 	}
 
 	/**

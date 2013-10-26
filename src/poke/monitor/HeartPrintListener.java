@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import eye.Comm.Management;
 
 public class HeartPrintListener implements MonitorListener {
-	protected static Logger logger = LoggerFactory.getLogger("monitor");
+	protected static Logger logger = LoggerFactory.getLogger(HeartPrintListener.class);
 
 	private String nodeID;
 

@@ -42,7 +42,7 @@ import eye.Comm.Management;
  * 
  */
 public class HeartbeatManager extends Thread {
-	protected static Logger logger = LoggerFactory.getLogger("management");
+	protected static Logger logger = LoggerFactory.getLogger(HeartbeatManager.class);
 	protected static AtomicReference<HeartbeatManager> instance = new AtomicReference<HeartbeatManager>();
 
 	// frequency heartbeats are checked
