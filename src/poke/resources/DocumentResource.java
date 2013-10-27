@@ -43,23 +43,14 @@ public class DocumentResource implements Resource {
 	public Response process(Request request) {
 		// TODO add code to process the message/event received
 		logger.info("poke: " + request.getBody().getFinger().getTag());
-
-		Response.Builder rb = Response.newBuilder();
-
-		// metadata
-		rb.setHeader(ResourceUtil.buildHeaderFrom(request.getHeader(), ReplyStatus.SUCCESS, null));
-
-		// payload
+		
+		// reply payload
 		PayloadReply.Builder pb = PayloadReply.newBuilder();
 		Finger.Builder fb = Finger.newBuilder();
-		fb.setTag(request.getBody().getFinger().getTag());
-		fb.setNumber(request.getBody().getFinger().getNumber());
-		pb.setFinger(fb.build());
-		rb.setBody(pb.build());
 
-		Response reply = rb.build();
-		
-		Document doc = request.getBody().getDoc(); 
+		Document doc = request.getBody().getDoc();
+		eye.Comm.Document.Builder d = null;
+		ReplyStatus replyStatus = ReplyStatus.SUCCESS;
 		// Extract the document if any
 		if(doc != null)
 		{
@@ -68,20 +59,36 @@ public class DocumentResource implements Resource {
 			if(fileName != null && fileContent != null && fileName.length() > 0 && !fileContent.isEmpty())
 			{
 				logger.info("coying file : "+fileName);
-				docAdd(fileName, fileContent);
+				replyStatus = docAdd(fileName, fileContent);
 			}
+			d = eye.Comm.Document.newBuilder();
+			d.setDocName(fileName);
+			pb.addDocs(d.build());
 		}
+		
+		Response.Builder rb = Response.newBuilder();
 
+		// metadata
+		rb.setHeader(ResourceUtil.buildHeaderFrom(request.getHeader(), replyStatus, null));
+		
+		fb.setTag(request.getBody().getFinger().getTag());
+		fb.setNumber(request.getBody().getFinger().getNumber());
+		pb.setFinger(fb.build());
+		rb.setBody(pb.build());
+
+		Response reply = rb.build();
+		
 		return reply;
 	}
 	
-	public void docAdd(String fileName, ByteString fileContent){
+	public ReplyStatus docAdd(String fileName, ByteString fileContent){
 		try {
 
 			String filePath = Server.COMMON_LOCATION+Server.SERVER_NAME+"/"+fileName;
 			if(new File(filePath).exists())
 			{
 				logger.info("File already exists ...so not copying. location : "+filePath);
+				return ReplyStatus.SUCCESS;
 			}
 			else
 			{
@@ -90,12 +97,14 @@ public class DocumentResource implements Resource {
 				IOUtils.closeQuietly(dataOutputStream);
 
 				logger.info("Copied transfered file ...fileName : "+fileName);
+				return ReplyStatus.SUCCESS;
 			}
 		} 
 		catch ( IOException e) 
 		{
 			System.err.println("An error occurred while copying the transferred file !!!");
 			e.printStackTrace();
+			return ReplyStatus.FAILURE;
 		}
 	}
 

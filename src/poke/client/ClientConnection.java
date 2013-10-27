@@ -15,7 +15,10 @@
  */
 package poke.client;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -74,7 +77,24 @@ public class ClientConnection {
 	}
 
 	public static ClientConnection initConnection(String host, int port) {
-
+		try {
+			Socket client = new Socket(host, port);
+			if(client.isConnected()) {
+				client.close();
+			}
+			else {
+				return null;
+			}
+		} 
+		catch (UnknownHostException e) {
+			logger.info("Not able to connect to host : "+host+", port : "+port);
+			return null;
+		} 
+		catch (IOException e) {
+			logger.info("Not able to connect to host : "+host+", port : "+port);
+			return null;
+		}
+		
 		ClientConnection rtn = new ClientConnection(host, port);
 		return rtn;
 	}
@@ -147,7 +167,7 @@ public class ClientConnection {
 		h.setOriginator("client");
 		h.setTag("test finger");
 		h.setTime(System.currentTimeMillis());
-		h.setRoutingId(eye.Comm.Header.Routing.FINGER);
+		h.setRoutingId(eye.Comm.Header.Routing.DOCADD);
 		r.setHeader(h.build());
 
 		eye.Comm.Request req = r.build();
