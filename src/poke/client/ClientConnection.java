@@ -79,11 +79,14 @@ public class ClientConnection {
 	public static ClientConnection initConnection(String host, int port) {
 		try {
 			Socket client = new Socket(host, port);
-			if(client.isConnected()) {
-				client.close();
-			}
-			else {
+			if(!client.isConnected()) {
+				if(client != null) {
+					client.close();
+				}
 				return null;
+			}
+			if(client != null) {
+				client.close();
 			}
 		} 
 		catch (UnknownHostException e) {

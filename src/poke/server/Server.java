@@ -23,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -77,8 +79,9 @@ public class Server {
 	protected HeartbeatManager hbMgr;
 	
 	public static String COMMON_LOCATION = "/Users/amrita/Documents/";
-	
 	public static String SERVER_NAME;
+	
+	protected Map<String, ClientConnection> neighborToCcMap = new HashMap<String, ClientConnection>();
 
 	/**
 	 * static because we need to get a handle to the factory from the shutdown
@@ -184,6 +187,7 @@ public class Server {
 				{
 					continue;
 				}
+				
 				logger.info("Copying file : "+file.getAbsolutePath()+" to host : "+cc.getHost()+", port : "+cc.getPort());
 				
 				DataInputStream inputStream = new DataInputStream(new FileInputStream(file));
@@ -239,32 +243,6 @@ public class Server {
 	/**
 	 * 
 	 */
-	public void copyFilesToAdjacentNeighbor(String neighborHostname, int neighborPort, String serverName)
-	{
-		//TODO: One time effort to check whether we can transfer files. Later on move this
-		// to place where we can handle on going requests
-		{
-			logger.info("Connecting to neighborHostname : "+neighborHostname+", neighborPort : "+neighborPort);
-			ClientConnection cc = ClientConnection.initConnection(neighborHostname, neighborPort);
-			ClientListener listener = new ClientPrintListener("ClientPrintListener for Neighbour Copy");
-			cc.addListener(listener);
-
-			// This just for test so that we know that poke is working
-			int count = 0;
-			for (int i = 0; i < 3; i++) {
-				count++;
-				cc.poke("POKE", count);
-			}
-
-			// Transfer file using protobuf
-			transferFile(cc, serverName);
-		}
-	}
-	
-	
-	/**
-	 * 
-	 */
 	public void run() {
 		String str = conf.getServer().getProperty("port");
 		if (str == null) {
@@ -302,17 +280,83 @@ public class Server {
 		HeartbeatConnector conn = HeartbeatConnector.getInstance();
 		conn.start();
 
-		// Copy all my files to neighbours
+		// manage neighbor doc transfer connections
+		createNeighborConn();
+		
+		logger.info(SERVER_NAME+" is ready");
+	}
+
+	private void addNeighborToMap(String neighborHostname, int neighborPort, String serverName){
+		ClientConnection cc = ClientConnection.initConnection(neighborHostname, neighborPort);
+		if(cc != null){
+			logger.info("Connecting to neighborHostname : "+neighborHostname+", neighborPort : "+neighborPort);
+			ClientListener listener = new ClientPrintListener("ClientPrintListener for "+neighborHostname+":"+neighborPort);
+			cc.addListener(listener);
+			// This just for test so that we know that poke is working
+			int count = 0;
+			for (int i = 0; i < 3; i++) {
+				count++;
+				cc.poke("POKE", count);
+			}
+
+			// Transfer file using protobuf
+			transferFile(cc, serverName);
+		}
+		
+		neighborToCcMap.put(neighborHostname+":"+neighborPort, cc);
+	}
+	
+	private void createNeighborConn() {
+		// Build Neighbor to cc map
 		for (NodeDesc nn : conf.getNearest().getNearestNodes().values()) {
 			// Neighbor hostname
 			String neighborHostname = nn.getHost();
 			// Neighbor port
 			int neighborPort = nn.getPort();
 			
-			copyFilesToAdjacentNeighbor(neighborHostname, neighborPort, SERVER_NAME);
+			addNeighborToMap(neighborHostname, neighborPort, SERVER_NAME);
 		}
-		
-		logger.info(SERVER_NAME+" is ready");
+
+		// Thread to handle Copying all my files to neighbours
+		Thread th = new Thread() {
+			public void run() {
+				while(true){
+					try {
+						Thread.sleep(5000); // sleep for 5 secs
+						for (NodeDesc nn : conf.getNearest().getNearestNodes().values()) {
+							// Neighbor hostname
+							String neighborHostname = nn.getHost();
+							// Neighbor port
+							int neighborPort = nn.getPort();
+
+							String neighborKey = neighborHostname+":"+neighborPort;
+							
+							if(neighborToCcMap.get(neighborKey) == null)
+							{
+								addNeighborToMap(neighborHostname, neighborPort, SERVER_NAME);
+							}
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					boolean toBreak = true;
+					// Check if all the neighbor's got all the files
+					for(Entry<String, ClientConnection> entry : neighborToCcMap.entrySet())
+					{
+						if(entry.getValue() == null)
+						{
+							toBreak = false;
+						}
+					}
+					if(toBreak) {
+						logger.info("Thread work is done.");
+						break;
+					}
+				}
+			}
+		};
+
+		th.start();
 	}
 
 	/**
